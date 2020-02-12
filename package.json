@@ -1,0 +1,31 @@
+{
+    "name": "nodejs-api-crm",
+    "version": "1.0.0",
+    "description": "Nodejs-Api-CRM",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/VUQuangNam/Nodejs-Api-CRM.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/VUQuangNam/Nodejs-Api-CRM/issues"
+    },
+    "homepage": "https://github.com/VUQuangNam/Nodejs-Api-CRM#readme",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-validation": "^1.0.3",
+        "joi": "^14.3.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.8.11",
+        "nodemon": "^2.0.2"
+    }
+}
