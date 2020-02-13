@@ -14,35 +14,36 @@ const ProductController = require('../controllers/product.controller')
 const AccountController = require('../controllers/account.controller');
 const OrderController = require('../controllers/order.controller');
 
-
 const checkAuth = require('../middlewares/auth.middlewares');
+const checkRole = require('../middlewares/role.middlewares');
 
 const employeeCondition = require('../condition/employ.condition');
 const customerCondition = require('../condition/customer.condition');
 const productCondition = require('../condition/product.condition');
 const orderCondition = require('../condition/order.condition');
 
-
-
 router.route('/employee')
     .get(checkAuth,
         validate(ListEmployeeValidation),
-        // checkRole('listUser'),
+        checkRole('LIST_USER'),
         employeeCondition.condition,
         EmployeeController.list
     )
     .post(
         checkAuth,
-        // checkRole('createUser'),
+        checkRole('CREATE_USER'),
         validate(EmployeeValidation),
         EmployeeController.create);
 router.route('/employee/:employee_id')
     .get(checkAuth,
+        checkRole('DETAIL_USER'),
         EmployeeController.detail)
     .put(checkAuth,
+        checkRole('UPDATE_USER'),
         validate(EmployeeValidation),
         EmployeeController.update)
     .delete(checkAuth,
+        checkRole('DELETE_USER'),
         EmployeeController.delete);
 
 router.route('/customer')
@@ -53,9 +54,7 @@ router.route('/customer')
         customerCondition.condition,
         CustomerController.list
     )
-    .post(checkAuth,
-        // checkRole('createUser'),
-        validate(CustomerValidation),
+    .post(validate(CustomerValidation),
         CustomerController.create);
 router.route('/customer/:customer_id')
     .get(checkAuth,

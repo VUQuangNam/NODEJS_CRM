@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Product = require('../models/product.model')
 
 const orderSchema = mongoose.Schema(
     {
@@ -10,10 +9,14 @@ const orderSchema = mongoose.Schema(
             type: [{
                 id: String,
                 name: String,
-                price: Number
+                price: Number,
+                quantity: Number
             }]
         },
         note: String,
+        discount: Number,
+        total_price: Number,
+        status: String,
         create_at: {
             type: Number,
             default: Date.now

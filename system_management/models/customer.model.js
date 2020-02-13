@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const Order = require('../models/order.model')
+
 const customerSchema = mongoose.Schema(
     {
         _id: {
@@ -88,6 +90,23 @@ Customer.findOneCustomer = async (id) => {
             status: 404,
             message: 'NOT_FOUND'
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+Customer.findOrder = async (id) => {
+    try {
+        const list = [];
+        const data = await Order.find({});
+        data.forEach(x => {
+            if (x.create_by.id === id) return list.push({
+                _id: x.id,
+                items: x.items,
+                note: x.note
+            });
+        });
+        return list;
     } catch (error) {
         console.log(error);
     }

@@ -33,7 +33,7 @@ const productSchema = mongoose.Schema(
     }
 );
 
-var Product = module.exports = mongoose.model('Product', productSchema, 'prodcuts');
+var Product = module.exports = mongoose.model('Product', productSchema, 'products');
 module.exports.get = function (callback, limit) {
     Product.find(callback).limit(limit);
 }

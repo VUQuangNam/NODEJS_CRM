@@ -5,7 +5,8 @@ module.exports = {
         body: {
             name: joi.string(),
             note: joi.string(),
-            price: joi.number().positive()
+            price: joi.number().positive(),
+            items: joi.array().min(1)
         }
     },
     ListOrderValidation: {

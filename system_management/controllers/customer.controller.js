@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const Customer = require('../models/customer.model')
+const Customer = require('../models/customer.model');
+const Order = require('../models/order.model');
 
 exports.list = async (req, res) => {
     try {
@@ -11,10 +12,14 @@ exports.list = async (req, res) => {
                 }
             }
         ]);
-        customers.forEach(x => {
-            delete x.password;
-            delete x.__v;
-        });
+        // customers.forEach(async (x) => {
+        //     const list_order = await Customer.findOrder(x._id);
+        //     x.order = list_order;
+        //     console.log(x.order)
+        //     // return x.order = list_order;
+        //     // delete x.password;
+        //     // delete x.__v;
+        // });
         return res.json({
             count: customers.length,
             data: customers
@@ -38,11 +43,7 @@ exports.create = async (req, res) => {
             gender,
             phone,
             address,
-            birthday,
-            create_by: {
-                id: req.userData.id,
-                name: req.userData.name
-            }
+            birthday
         });
         let data = await Customer.findOne({
             $or: [
@@ -74,8 +75,12 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
+        const list_order = await Customer.findOrder(req.params.customer_id);
         let data = await Customer.findOneCustomer(req.params.customer_id);
-        if (data.status === 200) return res.json({ data: data.data })
+        if (data.status === 200) {
+            data.data.order = list_order;
+            return res.json({ data: data.data })
+        }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
         return res.json({ message: 'Không tìm thấy dữ liệu' })
