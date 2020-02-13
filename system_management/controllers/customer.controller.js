@@ -12,14 +12,24 @@ exports.list = async (req, res) => {
                 }
             }
         ]);
-        // customers.forEach(async (x) => {
-        //     const list_order = await Customer.findOrder(x._id);
-        //     x.order = list_order;
-        //     console.log(x.order)
-        //     // return x.order = list_order;
-        //     // delete x.password;
-        //     // delete x.__v;
-        // });
+        // const result = await Customer.aggregate([
+        //     {
+        //         $lookup: {
+        //             from: 'orders',
+        //             localField: 'create_by.id',
+        //             foreignField: '_id',
+        //             pipeline: [
+        //                 {
+        //                     $match: {
+        //                         $and: req.conditions
+        //                     }
+        //                 }
+        //             ],
+        //             as: 'orders'
+        //         }
+        //     }
+        // ])
+        // console.log(result);
         return res.json({
             count: customers.length,
             data: customers
@@ -78,7 +88,7 @@ exports.detail = async (req, res) => {
         const list_order = await Customer.findOrder(req.params.customer_id);
         let data = await Customer.findOneCustomer(req.params.customer_id);
         if (data.status === 200) {
-            data.data.order = list_order;
+            data.data.orders = list_order;
             return res.json({ data: data.data })
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })

@@ -109,5 +109,18 @@ router.route('/employee/login').post(AccountController.login);
 
 router.route('/customer/login').post(AccountController.logincustomer);
 
+router.route('/logout').post(
+    checkAuth,
+    AccountController.logout
+);
+
+router.route('/employee/changePas')
+    .post(checkAuth,
+        AccountController.changePassEmPloyee
+    );
+router.route('/customer/changePas')
+    .post(checkAuth,
+        AccountController.changePassCustomer
+    );
 
 module.exports = router;
