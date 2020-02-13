@@ -1,35 +1,23 @@
 const mongoose = require('mongoose');
 
 const Customer = require('../models/customer.model');
-const Order = require('../models/order.model');
 
 exports.list = async (req, res) => {
     try {
-        const customers = await Customer.aggregate([
+        let customers = await Customer.aggregate([
             {
+                $lookup: {
+                    from: 'orders',
+                    localField: '_id',
+                    foreignField: 'create_by.id',
+                    as: 'orders'
+                },
+            }, {
                 $match: {
                     $and: req.conditions
                 }
             }
         ]);
-        // const result = await Customer.aggregate([
-        //     {
-        //         $lookup: {
-        //             from: 'orders',
-        //             localField: 'create_by.id',
-        //             foreignField: '_id',
-        //             pipeline: [
-        //                 {
-        //                     $match: {
-        //                         $and: req.conditions
-        //                     }
-        //                 }
-        //             ],
-        //             as: 'orders'
-        //         }
-        //     }
-        // ])
-        // console.log(result);
         return res.json({
             count: customers.length,
             data: customers
@@ -57,12 +45,11 @@ exports.create = async (req, res) => {
         });
         let data = await Customer.findOne({
             $or: [
-                { username: req.body.username },
-                // { email: req.body.email }
+                { username: req.body.username }
             ]
         });
         if (data) {
-            return res.json({ message: 'Tên đăng nhập hoặc email đã được sử dụng' })
+            return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
         } else {
             customer.save(async (error, customer) => {
                 customer = customer.toJSON();
@@ -85,15 +72,26 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
-        const list_order = await Customer.findOrder(req.params.customer_id);
-        let data = await Customer.findOneCustomer(req.params.customer_id);
+        const data = await Customer.findOneCustomer(req.params.customer_id);
         if (data.status === 200) {
-            data.data.orders = list_order;
-            return res.json({ data: data.data })
+            const customers = await Customer.aggregate([
+                {
+                    $lookup: {
+                        from: 'orders',
+                        localField: '_id',
+                        foreignField: 'create_by.id',
+                        as: 'orders'
+                    }
+                }
+            ]);
+            const check = customers.findIndex(x => x._id === req.params.customer_id);
+            return res.json({
+                data: customers[check]
+            })
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ message: error })
     }
 };
 

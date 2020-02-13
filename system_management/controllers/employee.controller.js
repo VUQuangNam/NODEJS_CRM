@@ -46,12 +46,11 @@ exports.create = async (req, res) => {
         });
         let data = await Employee.findOne({
             $or: [
-                { username: req.body.username },
-                // { email: req.body.email }
+                { username: req.body.username }
             ]
         });
         if (data) {
-            return res.json({ message: 'Tên đăng nhập hoặc email đã được sử dụng' })
+            return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
         } else {
             employee.save(async (error, employee) => {
                 employee = employee.toJSON();

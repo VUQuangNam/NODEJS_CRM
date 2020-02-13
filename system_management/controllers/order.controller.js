@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Order = require('../models/order.model');
+const Customer = require('../models/customer.model');
 
 exports.list = async (req, res) => {
     try {
@@ -31,6 +32,7 @@ exports.create = async (req, res) => {
             _id: mongoose.Types.ObjectId(),
             items,
             note,
+            status: 'Đặt hàng',
             create_by: {
                 id: req.userData.id,
                 name: req.userData.name
@@ -40,10 +42,14 @@ exports.create = async (req, res) => {
             if (error) {
                 return res.json({ message: error });
             } else {
-                return res.json({
-                    message: 'Thêm mới thành công!',
-                    data: order
-                });
+                let data = await Customer.findOneCustomer(req.userData.id);
+                if (data.status === 200) {
+                    return res.json({
+                        message: 'Thêm mới thành công!',
+                        data: order
+                    });
+                }
+                if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
             }
         });
     } catch (error) {
@@ -65,8 +71,6 @@ exports.update = async (req, res) => {
     try {
         const { order_id } = req.params;
         const body = req.body;
-        if (body.password) return res.json({ message: 'Không thể đổi mật khẩu trong mục này' })
-        body.update_at = Date.now();
         let data = await Order.findOneOrder(order_id);
         if (data.status === 200) {
             await Order.updateOne({ _id: order_id }, body);
@@ -78,15 +82,15 @@ exports.update = async (req, res) => {
     }
 };
 
-exports.delete = async (req, res) => {
-    try {
-        let data = await Order.findOneOrder(req.params.order_id);
-        if (data.status === 200) {
-            await Order.deleteOne({ _id: data.data._id });
-            return res.json({ message: 'Xóa Thành Công' });
-        }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (error) {
-        return res.json({ message: error })
-    }
-};
+// exports.delete = async (req, res) => {
+//     try {
+//         let data = await Order.findOneOrder(req.params.order_id);
+//         if (data.status === 200) {
+//             await Order.deleteOne({ _id: data.data._id });
+//             return res.json({ message: 'Xóa Thành Công' });
+//         }
+//         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
+//     } catch (error) {
+//         return res.json({ message: error })
+//     }
+// };

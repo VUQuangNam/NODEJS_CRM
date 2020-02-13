@@ -94,20 +94,3 @@ Customer.findOneCustomer = async (id) => {
         console.log(error);
     }
 }
-
-Customer.findOrder = async (id) => {
-    try {
-        const list = [];
-        const data = await Order.find({});
-        data.forEach(x => {
-            if (x.create_by.id === id) return list.push({
-                _id: x.id,
-                items: x.items,
-                note: x.note
-            });
-        });
-        return list;
-    } catch (error) {
-        console.log(error);
-    }
-}

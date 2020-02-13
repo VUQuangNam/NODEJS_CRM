@@ -102,8 +102,8 @@ router.route('/order/:order_id')
     .put(checkAuth,
         validate(OrderValidation),
         OrderController.update)
-    .delete(checkAuth,
-        OrderController.delete);
+// .delete(checkAuth,
+//     OrderController.delete);
 
 router.route('/employee/login').post(AccountController.login);
 
