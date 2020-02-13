@@ -5,6 +5,10 @@ const orderSchema = mongoose.Schema(
         _id: {
             type: String
         },
+        note: String,
+        discount: Number,
+        total_price: Number,
+        status: String,
         items: {
             type: [{
                 id: String,
@@ -14,10 +18,6 @@ const orderSchema = mongoose.Schema(
             }],
             require
         },
-        note: String,
-        discount: Number,
-        total_price: Number,
-        status: String,
         create_at: {
             type: Number,
             default: Date.now

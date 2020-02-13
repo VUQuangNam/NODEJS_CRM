@@ -103,6 +103,36 @@ exports.update = async (req, res) => {
     }
 };
 
+exports.cancel = async (req, res) => {
+    try {
+        const { order_id } = req.params;
+        let data = await Order.findOneOrder(order_id);
+        if (data.status === 200 && req.userData.id === data.data.create_by.id) {
+            await Order.updateOne({ _id: order_id }, { status: 'Đã hủy' });
+            return res.json({ message: 'Đơn hàng đã được hủy' });
+        }
+        if (!data.data || !(req.userData.id === data.data.create_by.id))
+            return res.json({ message: 'Không tìm thấy dữ liệu' })
+    } catch (err) {
+        return res.json({ message: err })
+    }
+};
+
+exports.confirm = async (req, res) => {
+    try {
+        const { order_id } = req.params;
+        let data = await Order.findOneOrder(order_id);
+        if (data.status === 200 && req.userData.id === data.data.create_by.id) {
+            await Order.updateOne({ _id: order_id }, { status: 'Hoàn thành' });
+            return res.json({ message: 'Đơn hàng đã được giao' });
+        }
+        if (!data.data || !(req.userData.id === data.data.create_by.id))
+            return res.json({ message: 'Không tìm thấy dữ liệu' })
+    } catch (err) {
+        return res.json({ message: err })
+    }
+};
+
 // exports.delete = async (req, res) => {
 //     try {
 //         let data = await Order.findOneOrder(req.params.order_id);

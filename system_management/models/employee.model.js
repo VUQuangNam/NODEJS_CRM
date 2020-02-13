@@ -32,11 +32,11 @@ const employeeSchema = mongoose.Schema(
             default: null
         },
         birthday: Date,
-        update_at: {
+        create_at: {
             type: Number,
             default: Date.now
         },
-        create_at: {
+        update_at: {
             type: Number,
             default: Date.now
         },

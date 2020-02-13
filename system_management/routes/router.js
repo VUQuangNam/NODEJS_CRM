@@ -50,7 +50,6 @@ router.route('/customer')
     .get(
         checkAuth,
         validate(ListCustomerValidation),
-        // checkRole('listUser'),
         customerCondition.condition,
         CustomerController.list
     )
@@ -68,12 +67,10 @@ router.route('/customer/:customer_id')
 router.route('/product')
     .get(checkAuth,
         validate(ListProductValidation),
-        // checkRole('listUser'),
         productCondition.condition,
         ProductController.list
     )
     .post(checkAuth,
-        // checkRole('createUser'),
         validate(ProductValidation),
         ProductController.create);
 router.route('/product/:product_id')
@@ -88,12 +85,10 @@ router.route('/product/:product_id')
 router.route('/order')
     .get(checkAuth,
         validate(ListOrderValidation),
-        // checkRole('listUser'),
         orderCondition.condition,
         OrderController.list
     )
     .post(checkAuth,
-        // checkRole('createUser'),
         validate(OrderValidation),
         OrderController.create);
 router.route('/order/:order_id')
@@ -104,6 +99,12 @@ router.route('/order/:order_id')
         OrderController.update)
 // .delete(checkAuth,
 //     OrderController.delete);
+router.route('/order/cancel/:order_id')
+    .put(checkAuth,
+        OrderController.cancel);
+router.route('/order/confirm/:order_id')
+    .put(checkAuth,
+        OrderController.confirm)
 
 router.route('/employee/login').post(AccountController.login);
 

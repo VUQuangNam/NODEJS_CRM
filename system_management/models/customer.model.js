@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const Order = require('../models/order.model')
-
 const customerSchema = mongoose.Schema(
     {
         _id: {
@@ -13,6 +11,12 @@ const customerSchema = mongoose.Schema(
             type: String,
             required: true
         },
+        phone: String,
+        email: {
+            type: String
+        },
+        avatar: String,
+        cover: String,
         username: {
             type: String,
             required: true
@@ -22,13 +26,8 @@ const customerSchema = mongoose.Schema(
             required: true
         },
         orders: [],
-        email: {
-            type: String,
-            required: true
-        },
         age: Number,
         gender: String,
-        phone: String,
         address: {
             type: String,
             default: null
@@ -54,7 +53,6 @@ customerSchema.pre('save', async function (next) {
 })
 
 customerSchema.methods.generateAuthToken = async function () {
-    // Generate an auth token for the user
     const customer = this
     const token = jwt.sign({ _id: customer._id }, process.env.JWT_SECRET)
     customer.tokens = customer.tokens.concat({ token })
