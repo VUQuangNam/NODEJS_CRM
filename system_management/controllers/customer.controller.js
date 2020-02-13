@@ -48,23 +48,17 @@ exports.create = async (req, res) => {
                 { username: req.body.username }
             ]
         });
-        if (data) {
-            return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
-        } else {
-            customer.save(async (error, customer) => {
-                customer = customer.toJSON();
-                delete customer.password;
-                delete customer.__v;
-                if (error) {
-                    return res.json({ message: 'Tạo mới thất bại' });
-                } else {
-                    return res.json({
-                        message: 'Thêm mới thành công!',
-                        data: customer
-                    });
-                }
+        if (data) return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
+        customer.save(async (error, customer) => {
+            customer = customer.toJSON();
+            delete customer.password;
+            delete customer.__v;
+            if (error) return res.json({ message: 'Tạo mới thất bại' });
+            return res.json({
+                message: 'Thêm mới thành công!',
+                data: customer
             });
-        }
+        });
     } catch (error) {
         return res.json({ message: error })
     }

@@ -11,7 +11,8 @@ const orderSchema = mongoose.Schema(
                 name: String,
                 price: Number,
                 quantity: Number
-            }]
+            }],
+            require
         },
         note: String,
         discount: Number,
