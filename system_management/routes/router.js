@@ -6,8 +6,6 @@ const { CustomerValidation, ListCustomerValidation } = require('../validations/c
 const { ProductValidation, ListProductValidation } = require('../validations/product.validations');
 const { OrderValidation, ListOrderValidation } = require('../validations/order.validations');
 
-
-
 const EmployeeController = require('../controllers/employee.controller');
 const CustomerController = require('../controllers/customer.controller');
 const ProductController = require('../controllers/product.controller')
@@ -97,8 +95,6 @@ router.route('/order/:order_id')
     .put(checkAuth,
         validate(OrderValidation),
         OrderController.update)
-// .delete(checkAuth,
-//     OrderController.delete);
 router.route('/order/cancel/:order_id')
     .put(checkAuth,
         OrderController.cancel);

@@ -5,7 +5,9 @@ module.exports = {
         body: {
             name: joi.string(),
             note: joi.string(),
-            unit: joi.string().only('Cái', 'Chiếc', 'Bộ', 'Đôi'),
+            unit: joi.string()
+                .only('Cái', 'Chiếc', 'Bộ', 'Đôi')
+                .required(),
             price: joi.number().positive()
         }
     },

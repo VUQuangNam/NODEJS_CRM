@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Product = require('../models/product.model');
 const Employee = require('../models/employee.model');
 
-
 exports.list = async (req, res) => {
     try {
         const products = await Product.aggregate([

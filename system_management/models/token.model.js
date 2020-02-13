@@ -14,7 +14,6 @@ const TokenSchema = mongoose.Schema(
     }
 );
 
-// Export Token model
 const Token = module.exports = mongoose.model('Token', TokenSchema, 'tokens');
 module.exports.get = function (callback, limit) {
     Token.find(callback).limit(limit);

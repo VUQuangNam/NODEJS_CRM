@@ -5,14 +5,11 @@ module.exports = {
         body: {
             name: joi.string(),
             note: joi.string(),
-            price: joi.number().positive(),
             items: joi.array().min(1)
         }
     },
     ListOrderValidation: {
         query: {
-            min_price: joi.number().allow(null, '').min(0),
-            max_price: joi.number().allow(null, ''),
             keyword: joi.string()
                 .allow(null, ''),
             start_time: joi.number().allow(null, ''),

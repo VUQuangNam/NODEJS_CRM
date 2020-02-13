@@ -32,7 +32,11 @@ exports.create = async (req, res) => {
         const { name, username, password, role, email, age, gender, phone, address, birthday, avatar, cover } = req.body;
         const customer = new Customer({
             _id: mongoose.Types.ObjectId(),
-            name, username, password, role, email, age, gender, phone, address, birthday, avatar, cover
+            name, username, password, role, email, age, gender, phone, address, birthday, avatar, cover,
+            create_by: {
+                id: req.userData.id,
+                name: req.userData.name
+            }
         });
         let data = await Customer.findOne({
             $or: [

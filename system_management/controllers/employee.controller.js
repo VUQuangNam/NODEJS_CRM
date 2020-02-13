@@ -29,16 +29,7 @@ exports.create = async (req, res) => {
         const { name, username, password, role, email, age, gender, phone, address, birthday } = req.body;
         const employee = new Employee({
             _id: mongoose.Types.ObjectId(),
-            name,
-            username,
-            password,
-            role,
-            email,
-            age,
-            gender,
-            phone,
-            address,
-            birthday,
+            name, username, password, role, email, age, gender, phone, address, birthday,
             create_by: {
                 id: req.userData.id,
                 name: req.userData.name

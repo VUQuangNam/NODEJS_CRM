@@ -47,8 +47,7 @@ exports.create = async (req, res) => {
         discount = req.body.discount || 0;
         const order = new Order({
             _id: mongoose.Types.ObjectId(),
-            items,
-            note,
+            items, note,
             status: 'Đặt hàng',
             total_price: total,
             discount: discount,
