@@ -10,26 +10,25 @@ exports.login = async (req, res) => {
     try {
         Employee.findOne(
             { username: req.body.username }).exec((error, employee) => {
-                if (error) return res.json({ message: error })
-                if (!employee) return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' })
+                if (error) return res.json({ message: error });
+                if (!employee) return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' });
                 bcrypt.compare(req.body.password, employee.password, (error, result) => {
                     if (error) return res.json({ message: error });
                     if (result === true) {
                         return res.json({
                             message: "Đăng nhập thành công",
-                            data: employee,
                             token: jwt.sign({
                                 id: employee._id, username: employee.username,
                                 name: employee.name, role: employee.role
                             },
                                 process.env.JWT_SECRET,
                                 { expiresIn: '10d' })
-                        })
-                    } return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' })
+                        });
+                    } return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' });
                 })
             })
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error });
     }
 }
 
@@ -38,17 +37,15 @@ exports.changePassEmPloyee = async (req, res) => {
         const data = await Employee.findOneEmployee(req.userData.id);
         if (data.status === 200) {
             bcrypt.compare(req.body.password_old, data.data.password, async (error, result) => {
+                if (error) return res.json({ error: error });
                 if (result === true) {
-                    const body = req.body;
-                    body.password = await bcrypt.hash(req.body.password_new, 8)
-                    delete body.password_new;
-                    delete body.password_old;
-                    await Employee.updateOne({ _id: data.data._id }, body);
+                    const password = await bcrypt.hash(req.body.password_new, 8)
+                    await Employee.updateOne({ _id: data.data._id }, { password: password });
                     return res.json({
                         message: 'Cập nhật mật khẩu thành công'
                     });
                 }
-                return res.json({ error: 'Mật khẩu cũ không đúng.' })
+                return res.json({ error: 'Mật khẩu cũ không đúng.' });
             })
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
@@ -68,7 +65,6 @@ exports.logincustomer = async (req, res) => {
                     if (result === true) {
                         return res.json({
                             message: "Đăng nhập thành công",
-                            data: customer,
                             token: jwt.sign({
                                 id: customer._id, username: customer.username,
                                 name: customer.name
@@ -90,22 +86,18 @@ exports.changePassCustomer = async (req, res) => {
         const data = await Customer.findOneCustomer(req.userData.id);
         if (data.status === 200) {
             bcrypt.compare(req.body.password_old, data.data.password, async (error, result) => {
+                if (error) return res.json({ error: error });
                 if (result === true) {
-                    const body = req.body;
-                    body.password = await bcrypt.hash(req.body.password_new, 8)
-                    delete body.password_new;
-                    delete body.password_old;
-                    await Customer.updateOne({ _id: data.data._id }, body);
-                    return res.json({
-                        message: 'Cập nhật mật khẩu thành công'
-                    });
+                    const password = await bcrypt.hash(req.body.password_new, 8);
+                    await Customer.updateOne({ _id: data.data._id }, { password: password });
+                    return res.json({ message: 'Cập nhật mật khẩu thành công' });
                 }
-                return res.json({ error: 'Mật khẩu cũ không đúng.' })
+                return res.json({ error: 'Mật khẩu cũ không đúng.' });
             })
         }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
+        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error });
     }
 };
 
@@ -117,8 +109,8 @@ exports.logout = async (req, res) => {
             is_exist: false
         });
         token.save();
-        return res.json({ message: 'Đăng xuất thành công' })
+        return res.json({ message: 'Đăng xuất thành công' });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ message: error });
     }
 }

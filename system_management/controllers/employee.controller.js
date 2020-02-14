@@ -20,7 +20,7 @@ exports.list = async (req, res) => {
             data: employees
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -36,23 +36,20 @@ exports.create = async (req, res) => {
             }
         });
         let data = await Employee.findOne({
-            $or: [
-                { username: req.body.username }
-            ]
+            $or: [{ username: req.body.username }]
         });
         if (data) return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
         employee.save(async (error, employee) => {
+            if (error) return res.json({ error: error });
             employee = employee.toJSON();
             delete employee.password;
-            delete employee.__v;
-            if (error) return res.json({ message: error });
             return res.json({
                 message: 'Thêm mới thành công!',
                 data: employee
             });
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -62,7 +59,7 @@ exports.detail = async (req, res) => {
         if (data.status === 200) return res.json({ data: data.data })
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ error: error })
     }
 };
 
@@ -70,7 +67,6 @@ exports.update = async (req, res) => {
     try {
         const { employee_id } = req.params;
         const body = req.body;
-        if (body.password) return res.json({ message: 'Không thể đổi mật khẩu trong mục này' })
         body.update_at = Date.now();
         let data = await Employee.findOneEmployee(employee_id);
         if (data.status === 200) {
@@ -78,8 +74,8 @@ exports.update = async (req, res) => {
             return res.json({ message: 'Cập nhật dữ liệu thành công' });
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (err) {
-        return res.json({ message: err })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 
@@ -92,7 +88,7 @@ exports.delete = async (req, res) => {
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 

@@ -1,19 +1,19 @@
 require('dotenv').config();
 
-let express = require('express');
-let bodyParser = require('body-parser');
-let mongoose = require('mongoose');
-let router = require('express').Router();
-let CusRoutes = require('./system_management/routes/customer.router');
-let EmployeeRoutes = require('./system_management/routes/employee.router');
-let OrderRoutes = require('./system_management/routes/order.router');
-let ProductRoutes = require('./system_management/routes/product.router');
-let AccRoutes = require('./system_management/routes/account.router');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const router = require('express').Router();
+const CusRoutes = require('./system_management/routes/customer.router');
+const EmployeeRoutes = require('./system_management/routes/employee.router');
+const OrderRoutes = require('./system_management/routes/order.router');
+const ProductRoutes = require('./system_management/routes/product.router');
+const AccRoutes = require('./system_management/routes/account.router');
 const UpLoadRouters = require('./system_management/routes/uploads.router')
 
-let app = express();
+const app = express();
 
-var port = process.env.PORT;
+const port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -24,7 +24,7 @@ app.use(express.static('uploads'))
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true });
-var db = mongoose.connection;
+const db = mongoose.connection;
 
 if (!db)
     console.log("Lỗi kết nối")

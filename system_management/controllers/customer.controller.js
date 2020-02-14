@@ -18,32 +18,30 @@ exports.list = async (req, res) => {
                 }
             }
         ]);
+        customers.forEach(x => {
+            delete x.password;
+            delete x.__v;
+        });
         return res.json({
             count: customers.length,
             data: customers
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
 exports.create = async (req, res) => {
     try {
-        const { name, username, password, role, email, age, gender, phone, address, birthday, avatar, cover } = req.body;
+        const { name, username, password, email, age, gender, phone, address, birthday, avatar, cover } = req.body;
         const customer = new Customer({
             _id: mongoose.Types.ObjectId(),
-            name, username, password, role, email, age, gender, phone, address, birthday, avatar, cover,
-            create_by: {
-                id: req.userData.id,
-                name: req.userData.name
-            }
+            name, username, password, email, age, gender, phone, address, birthday, avatar, cover
         });
-        let data = await Customer.findOne({
-            $or: [
-                { username: req.body.username }
-            ]
+        const data = await Customer.findOne({
+            $or: [{ username: req.body.username }]
         });
-        if (data) return res.json({ message: 'Tên đăng nhập đã được sử dụng' })
+        if (data) return res.json({ message: 'Tên đăng nhập đã được sử dụng' });
         customer.save(async (error, customer) => {
             customer = customer.toJSON();
             delete customer.password;
@@ -55,7 +53,7 @@ exports.create = async (req, res) => {
             });
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -73,14 +71,15 @@ exports.detail = async (req, res) => {
                     }
                 }
             ]);
-            const check = customers.findIndex(x => x._id === req.params.customer_id);
-            return res.json({
-                data: customers[check]
-            })
+            await customers.find(x => {
+                if (x._id === req.params.customer_id)
+                    return res.json({ data: x })
+            });
+
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -88,7 +87,6 @@ exports.update = async (req, res) => {
     try {
         const { customer_id } = req.params;
         const body = req.body;
-        if (body.password) return res.json({ message: 'Không thể đổi mật khẩu trong mục này' })
         body.update_at = Date.now();
         let data = await Customer.findOneCustomer(customer_id);
         if (data.status === 200) {
@@ -96,8 +94,8 @@ exports.update = async (req, res) => {
             return res.json({ message: 'Cập nhật dữ liệu thành công' });
         }
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (err) {
-        return res.json({ message: err })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 
@@ -108,9 +106,9 @@ exports.delete = async (req, res) => {
             await Customer.deleteOne({ _id: data.data._id });
             return res.json({ message: 'Xóa Thành Công' });
         }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
+        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error });
     }
 };
 

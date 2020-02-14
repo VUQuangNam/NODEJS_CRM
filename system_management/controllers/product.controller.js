@@ -17,7 +17,7 @@ exports.list = async (req, res) => {
             data: products
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -37,10 +37,7 @@ exports.create = async (req, res) => {
             let result = await Product.findOne({ $or: [{ name: req.body.name }] });
             if (result) return res.json({ message: 'Tên sản phẩm đã được sử dụng' })
             product.save(async (error, product) => {
-                product = product.toJSON();
-                delete product.password;
-                delete product.__v;
-                if (error) return res.json({ message: 'Tạo mới thất bại' });
+                if (error) return res.json({ error: error });
                 return res.json({
                     message: 'Thêm mới thành công!',
                     data: product
@@ -55,11 +52,11 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
-        let data = await Product.findOneProduct(req.params.product_id);
+        const data = await Product.findOneProduct(req.params.product_id);
         if (data.status === 200) return res.json({ data: data.data })
         if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ error: error })
     }
 };
 
@@ -69,7 +66,6 @@ exports.update = async (req, res) => {
         if (data.status === 200 && req.userData.role) {
             const { product_id } = req.params;
             const body = req.body;
-            if (body.password) return res.json({ message: 'Không thể đổi mật khẩu trong mục này' })
             body.update_at = Date.now();
             let result = await Product.findOneProduct(product_id);
             if (result.status === 200) {
@@ -79,8 +75,8 @@ exports.update = async (req, res) => {
             if (!result.data) return res.json({ message: 'Không tìm thấy thông tin sản phẩm' })
         }
         if (!data.data || !req.userData.role) return req.json({ message: 'Unauthorized' })
-    } catch (err) {
-        return res.json({ message: err })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 

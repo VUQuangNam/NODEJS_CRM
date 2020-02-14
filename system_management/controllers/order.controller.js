@@ -18,22 +18,28 @@ exports.list = async (req, res) => {
                 data: orders
             });
         }
-        let customers = await Customer.aggregate([
+        const customers = await Customer.aggregate([
             {
                 $lookup: {
                     from: 'orders',
                     localField: '_id',
                     foreignField: 'create_by.id',
                     as: 'orders'
-                },
+                }
             }
         ]);
-        const check = customers.findIndex(x => x._id === req.userData.id);
-        return res.json({
-            data: customers[check].orders
-        })
+        const data = await Customer.findOneCustomer(req.userData.id);
+        if (data.status === 200) {
+            customers.find(x => {
+                if (x._id === data.data._id)
+                    return res.json({
+                        data: x.orders
+                    })
+            });
+        }
+        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -42,7 +48,10 @@ exports.create = async (req, res) => {
         const { items, note } = req.body;
         total = 0;
         req.body.items.forEach(async (x) => {
-            total = total + (x.price * x.quantity);
+            if (!x.quantity) { total = total }
+            else {
+                total = total + (x.price * x.quantity);
+            }
         });
         discount = req.body.discount || 0;
         const order = new Order({
@@ -57,8 +66,8 @@ exports.create = async (req, res) => {
             }
         });
         order.save(async (error, order) => {
-            if (error) return res.json({ message: error });
-            let data = await Customer.findOneCustomer(req.userData.id);
+            if (error) return res.json({ error: error });
+            const data = await Customer.findOneCustomer(req.userData.id);
             if (data.status === 200) {
                 return res.json({
                     message: 'Thêm mới thành công!',
@@ -68,17 +77,16 @@ exports.create = async (req, res) => {
             if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
         });
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
 exports.detail = async (req, res) => {
     try {
         let data = await Order.findOneOrder(req.params.order_id);
-        if ((data.status === 200 && req.userData.id === data.data.create_by.id) ||
-            req.userData.role
-        ) return res.json({ data: data.data })
-        if (!data.data || (req.userData.id === data.data.create_by.id))
+        if ((data.status === 200 && req.userData.id === data.data.create_by.id) || req.userData.role)
+            return res.json({ data: data.data })
+        if (!data.data || (req.userData.id !== data.data.create_by.id))
             return res.json({ message: 'Không tìm thấy thông tin đơn hàng' });
     } catch (error) {
         return res.json({ message: 'Không tìm thấy dữ liệu' })
@@ -96,9 +104,10 @@ exports.update = async (req, res) => {
             }
             return res.json({ message: 'Không thể thay đổi thông tin này' })
         }
-        if (!data.data || !(req.userData.id === data.data.create_by.id)) return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (err) {
-        return res.json({ message: err })
+        if (!data.data || (req.userData.id !== data.data.create_by.id))
+            return res.json({ message: 'Không tìm thấy dữ liệu' })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 
@@ -112,8 +121,8 @@ exports.cancel = async (req, res) => {
         }
         if (!data.data || !(req.userData.id === data.data.create_by.id))
             return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (err) {
-        return res.json({ message: err })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 
@@ -127,8 +136,8 @@ exports.confirm = async (req, res) => {
         }
         if (!data.data || !(req.userData.id === data.data.create_by.id))
             return res.json({ message: 'Không tìm thấy dữ liệu' })
-    } catch (err) {
-        return res.json({ message: err })
+    } catch (error) {
+        return res.json({ error: error })
     }
 };
 
