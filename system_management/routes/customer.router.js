@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const validate = require('express-validation');
+
 const { CustomerValidation, ListCustomerValidation } = require('../validations/customer.validations');
+
 const CustomerController = require('../controllers/customer.controller');
 const customerCondition = require('../condition/customer.condition');
 const checkAuth = require('../middlewares/auth.middlewares');

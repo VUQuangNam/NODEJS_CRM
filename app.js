@@ -9,7 +9,7 @@ let EmployeeRoutes = require('./system_management/routes/employee.router');
 let OrderRoutes = require('./system_management/routes/order.router');
 let ProductRoutes = require('./system_management/routes/product.router');
 let AccRoutes = require('./system_management/routes/account.router');
-
+const UpLoadRouters = require('./system_management/routes/uploads.router')
 
 let app = express();
 
@@ -18,6 +18,8 @@ var port = process.env.PORT;
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+app.use(express.static('uploads'))
 
 app.use(bodyParser.json());
 
@@ -34,7 +36,8 @@ app.use('/',
     CusRoutes,
     EmployeeRoutes,
     OrderRoutes,
-    ProductRoutes
+    ProductRoutes,
+    UpLoadRouters
 );
 
 app.listen(port, function () {

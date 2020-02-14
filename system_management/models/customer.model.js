@@ -15,7 +15,9 @@ const customerSchema = mongoose.Schema(
         email: {
             type: String
         },
-        avatar: String,
+        avatar: {
+            type: String
+        },
         cover: String,
         username: {
             type: String,
