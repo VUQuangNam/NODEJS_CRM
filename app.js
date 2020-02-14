@@ -4,7 +4,12 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 let router = require('express').Router();
-let apiRoutes = require('./system_management/routes/router');
+let CusRoutes = require('./system_management/routes/customer.router');
+let EmployeeRoutes = require('./system_management/routes/employee.router');
+let OrderRoutes = require('./system_management/routes/order.router');
+let ProductRoutes = require('./system_management/routes/product.router');
+let AccRoutes = require('./system_management/routes/account.router');
+
 
 let app = express();
 
@@ -24,7 +29,13 @@ if (!db)
 else
     console.log("Kết nối DB thành công")
 
-app.use('/api', apiRoutes);
+app.use('/',
+    AccRoutes,
+    CusRoutes,
+    EmployeeRoutes,
+    OrderRoutes,
+    ProductRoutes
+);
 
 app.listen(port, function () {
     console.log("Chạy RestHub trên cổng " + port);
