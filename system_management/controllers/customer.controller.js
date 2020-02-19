@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcryptjs = require('bcryptjs');
 const Customer = require('../models/customer.model');
 
 exports.list = async (req, res) => {
@@ -16,7 +16,7 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        req.body.password = await bcrypt.hash(req.body.password, 8)
+        req.body.password = await bcryptjs.hash(req.body.password, 8)
         const data = await Customer.create(req.body);
         return res.json({
             message: 'Thêm mới thành công',

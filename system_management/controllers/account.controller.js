@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose')
 
@@ -8,27 +8,28 @@ Token = require('../models/token.model')
 
 exports.login = async (req, res) => {
     try {
-        Employee.findOne(
-            { username: req.body.username }).exec((error, employee) => {
-                if (error) return res.json({ message: error });
-                if (!employee) return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' });
-                bcrypt.compare(req.body.password, employee.password, (error, result) => {
-                    if (error) return res.json({ message: error });
-                    if (result === true) {
-                        return res.json({
-                            message: "Đăng nhập thành công",
-                            token: jwt.sign({
-                                id: employee._id, username: employee.username,
-                                name: employee.name, role: employee.role
-                            },
-                                process.env.JWT_SECRET,
-                                { expiresIn: '10d' })
-                        });
-                    } return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' });
+        const employee = await Employee.findOne({
+            where: { username: req.body.username }
+        });
+        if (!employee) return res.json({ message: 'Tên đăng nhập không chính xác' });
+        bcryptjs.compare(req.body.password, employee.password, (error, result) => {
+            if (error) return res.json({ error: error });
+            if (result === true) {
+                return res.json({
+                    message: "Đăng nhập thành công",
+                    token: jwt.sign({
+                        id: employee.id,
+                        name: employee.name,
+                        roles: employee.roles
+                    },
+                        process.env.JWT_SECRET,
+                        { expiresIn: '10d' })
                 })
-            })
+            }
+            return res.json({ message: 'Mật khẩu không chính xác' })
+        })
     } catch (error) {
-        return res.json({ error: error });
+        return res.json({ message: error })
     }
 }
 
@@ -36,10 +37,10 @@ exports.changePassEmPloyee = async (req, res) => {
     try {
         const data = await Employee.findOneEmployee(req.userData.id);
         if (data.status === 200) {
-            bcrypt.compare(req.body.password_old, data.data.password, async (error, result) => {
+            bcryptjs.compare(req.body.password_old, data.data.password, async (error, result) => {
                 if (error) return res.json({ error: error });
                 if (result === true) {
-                    const password = await bcrypt.hash(req.body.password_new, 8)
+                    const password = await bcryptjs.hash(req.body.password_new, 8)
                     await Employee.updateOne({ _id: data.data._id }, { password: password });
                     return res.json({
                         message: 'Cập nhật mật khẩu thành công'
@@ -57,12 +58,10 @@ exports.changePassEmPloyee = async (req, res) => {
 exports.logincustomer = async (req, res) => {
     try {
         const customer = await Customer.findOne({
-            where: {
-                username: req.body.username
-            }
+            where: { username: req.body.username }
         });
         if (!customer) return res.json({ message: 'Tên đăng nhập không chính xác' });
-        bcrypt.compare(req.body.password, customer.password, (error, result) => {
+        bcryptjs.compare(req.body.password, customer.password, (error, result) => {
             if (error) return res.json({ error: error });
             if (result === true) {
                 return res.json({
@@ -86,10 +85,10 @@ exports.changePassCustomer = async (req, res) => {
     try {
         const data = await Customer.findOneCustomer(req.userData.id);
         if (data.status === 200) {
-            bcrypt.compare(req.body.password_old, data.data.password, async (error, result) => {
+            bcryptjs.compare(req.body.password_old, data.data.password, async (error, result) => {
                 if (error) return res.json({ error: error });
                 if (result === true) {
-                    const password = await bcrypt.hash(req.body.password_new, 8);
+                    const password = await bcryptjs.hash(req.body.password_new, 8);
                     await Customer.updateOne({ _id: data.data._id }, { password: password });
                     return res.json({ message: 'Cập nhật mật khẩu thành công' });
                 }

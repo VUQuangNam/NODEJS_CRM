@@ -11,18 +11,18 @@ const productCondition = require('../condition/product.condition');
 
 router.route('/product')
     .get(checkAuth,
-        validate(ListProductValidation),
-        productCondition.condition,
+        // validate(ListProductValidation),
+        // productCondition.condition,
         ProductController.list
     )
     .post(checkAuth,
-        validate(ProductValidation),
+        // validate(ProductValidation),
         ProductController.create);
 router.route('/product/:product_id')
     .get(checkAuth,
         ProductController.detail)
     .put(checkAuth,
-        validate(ProductValidation),
+        // validate(ProductValidation),
         ProductController.update)
     .delete(checkAuth,
         ProductController.delete);

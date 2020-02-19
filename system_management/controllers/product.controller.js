@@ -1,20 +1,13 @@
-const mongoose = require('mongoose');
-
 const Product = require('../models/product.model');
 const Employee = require('../models/employee.model');
 
 exports.list = async (req, res) => {
     try {
-        const products = await Product.aggregate([
-            {
-                $match: {
-                    $and: req.conditions
-                }
-            }
-        ]);
-        return res.json({
-            count: products.length,
-            data: products
+        Product.findAll().then(products => {
+            return res.json({
+                count: products.length,
+                data: products
+            })
         });
     } catch (error) {
         return res.json({ error: error })
@@ -23,28 +16,21 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const data = await Employee.findOneEmployee(req.userData.id);
-        if (data.status === 200 && req.userData.role) {
-            const { name, note, price, unit } = req.body;
-            const product = new Product({
-                _id: mongoose.Types.ObjectId(),
-                name, price, unit, note,
-                create_by: {
-                    id: req.userData.id,
-                    name: req.userData.name
-                }
-            });
-            let result = await Product.findOne({ $or: [{ name: req.body.name }] });
-            if (result) return res.json({ message: 'Tên sản phẩm đã được sử dụng' })
-            product.save(async (error, product) => {
-                if (error) return res.json({ error: error });
-                return res.json({
-                    message: 'Thêm mới thành công!',
-                    data: product
-                });
-            });
+        const check = await Employee.findOne({
+            where: { id: req.userData.id }
+        })
+        if (check && req.userData.roles) {
+            req.body.create_by = {
+                id: check.id,
+                name: check.name
+            }
+            const data = await Product.create(req.body);
+            return res.json({
+                message: 'Thêm mới thành công',
+                data: data
+            })
         }
-        if (!data.data || !req.userData.role) return res.json({ message: 'Unauthorized' })
+        return res.json({ message: 'Unauthorized' })
     } catch (error) {
         return res.json({ message: error })
     }
@@ -52,9 +38,11 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
-        const data = await Product.findOneProduct(req.params.product_id);
-        if (data.status === 200) return res.json({ data: data.data })
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
+        const data = await Product.findOne({
+            where: { id: req.params.product_id }
+        });
+        if (data && data.create_by.id === req.userData.id) return res.json({ data: data });
+        return res.json({ message: 'Unauthorized' })
     } catch (error) {
         return res.json({ error: error })
     }
@@ -62,19 +50,17 @@ exports.detail = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const data = await Employee.findOneEmployee(req.userData.id);
-        if (data.status === 200 && req.userData.role) {
-            const { product_id } = req.params;
-            const body = req.body;
-            body.update_at = Date.now();
-            let result = await Product.findOneProduct(product_id);
-            if (result.status === 200) {
-                await Product.updateOne({ _id: product_id }, body);
-                return res.json({ message: 'Cập nhật dữ liệu thành công' });
-            }
-            if (!result.data) return res.json({ message: 'Không tìm thấy thông tin sản phẩm' })
+        const data = await Product.findOne({
+            where: { id: req.params.product_id }
+        })
+        if (data && data.create_by.id === req.userData.id) {
+            await Product.update(req.body, {
+                where: {
+                    id: req.params.product_id
+                }
+            }); return res.json({ message: 'Cập nhật dữ liệu thành công' })
         }
-        if (!data.data || !req.userData.role) return req.json({ message: 'Unauthorized' })
+        return res.json({ message: 'Không tìm thấy thông tin đơn hàng' })
     } catch (error) {
         return res.json({ error: error })
     }
@@ -82,17 +68,17 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const data = await Employee.findOneEmployee(req.userData.id);
-        if (data.status === 200 && req.userData.role) {
-            let result = await Product.findOneProduct(req.params.product_id);
-            if (result.status === 200) {
-                await Product.deleteOne({ _id: result.data._id });
-                return res.json({ message: 'Xóa Thành Công' });
-            }
-            if (!result.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
-        }
-        if (!data.data || !req.userData.role) return res.json({ message: 'Unauthorized' })
+        const data = await Product.findOne({
+            where: { id: req.params.product_id }
+        });
+        if (data && data.create_by.id === req.userData.id) {
+            await Product.destroy({
+                where: { id: data.id }
+            });
+            return res.json({ message: 'Xóa thành công' })
+        };
+        return res.json({ message: 'Unauthorized' })
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };

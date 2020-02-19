@@ -1,43 +1,15 @@
-const mongoose = require('mongoose');
-
 const Order = require('../models/order.model');
 const Customer = require('../models/customer.model');
 
+
 exports.list = async (req, res) => {
     try {
-        if (req.userData.role) {
-            const orders = await Order.aggregate([
-                {
-                    $match: {
-                        $and: req.conditions
-                    }
-                }
-            ]);
+        Order.findAll().then(orders => {
             return res.json({
                 count: orders.length,
                 data: orders
-            });
-        }
-        const customers = await Customer.aggregate([
-            {
-                $lookup: {
-                    from: 'orders',
-                    localField: '_id',
-                    foreignField: 'create_by.id',
-                    as: 'orders'
-                }
-            }
-        ]);
-        const data = await Customer.findOneCustomer(req.userData.id);
-        if (data.status === 200) {
-            customers.find(x => {
-                if (x._id === data.data._id)
-                    return res.json({
-                        data: x.orders
-                    })
-            });
-        }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' });
+            })
+        });
     } catch (error) {
         return res.json({ error: error })
     }
@@ -45,26 +17,33 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        total = 0;
-        req.body.products.forEach(async (x) => {
-            if (!x.quantity) { total = total }
-            else {
-                total = total + (x.price * x.quantity);
-            }
-        });
-        req.body.discount = req.body.discount || 0;
-        req.body.total_price = total;
-        req.body.status = 'Đặt hàng';
-        req.body.create_by = {
-            id: req.userData.id,
-            name: req.userData.name
-        }
-        console.log(req.body);
-        const data = await Order.create(req.body);
-        return res.json({
-            message: 'Thêm mới thành công',
-            data: data
+        const check = await Customer.findOne({
+            where: { id: req.userData.id }
         })
+        if (!req.body.products || !req.body.products.length)
+            return res.json({ message: 'Vui lòng thêm sản phẩm vào đơn hàng' })
+        if (check && req.body.products.length) {
+            total = 0;
+            req.body.products.forEach(async (x) => {
+                if (!x.quantity) { total = total }
+                else {
+                    total = total + (x.price * x.quantity);
+                }
+            });
+            req.body.discount = req.body.discount || 0;
+            req.body.total_price = total;
+            req.body.status = 'Đặt hàng';
+            req.body.create_by = {
+                id: check.id,
+                name: check.name
+            }
+            const data = await Order.create(req.body);
+            return res.json({
+                message: 'Thêm mới thành công',
+                data: data
+            })
+        }
+        return res.json({ message: 'Không tìm thấy dữ liệu tài khoản' })
     } catch (error) {
         return res.json({ error: error })
     }
@@ -72,29 +51,29 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
-        let data = await Order.findOneOrder(req.params.order_id);
-        if ((data.status === 200 && req.userData.id === data.data.create_by.id) || req.userData.role)
-            return res.json({ data: data.data })
-        if (!data.data || (req.userData.id !== data.data.create_by.id))
-            return res.json({ message: 'Không tìm thấy thông tin đơn hàng' });
+        const data = await Order.findOne({
+            where: { id: req.params.order_id }
+        })
+        if (data && data.create_by.id === req.userData.id) return res.json({ data: data });
+        return res.json({ message: 'Không tìm thấy thông tin đơn hàng' })
     } catch (error) {
-        return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ error: error })
     }
 };
 
 exports.update = async (req, res) => {
     try {
-        const { order_id } = req.params;
-        let data = await Order.findOneOrder(order_id);
-        if (data.status === 200 && req.userData.id === data.data.create_by.id) {
-            if (req.body.note) {
-                await Order.updateOne({ _id: order_id }, { note: req.body.note });
-                return res.json({ message: 'Cập nhật dữ liệu thành công' });
-            }
-            return res.json({ message: 'Không thể thay đổi thông tin này' })
+        const data = await Order.findOne({
+            where: { id: req.params.order_id }
+        })
+        if (data && data.create_by.id === req.userData.id) {
+            await Order.update(req.body, {
+                where: {
+                    id: req.params.order_id
+                }
+            }); return res.json({ message: 'Cập nhật dữ liệu thành công' })
         }
-        if (!data.data || (req.userData.id !== data.data.create_by.id))
-            return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ message: 'Không tìm thấy thông tin đơn hàng' })
     } catch (error) {
         return res.json({ error: error })
     }
@@ -102,14 +81,17 @@ exports.update = async (req, res) => {
 
 exports.cancel = async (req, res) => {
     try {
-        const { order_id } = req.params;
-        let data = await Order.findOneOrder(order_id);
-        if (data.status === 200 && req.userData.id === data.data.create_by.id) {
-            await Order.updateOne({ _id: order_id }, { status: 'Đã hủy' });
-            return res.json({ message: 'Đơn hàng đã được hủy' });
+        const data = await Order.findOne({
+            where: { id: req.params.order_id }
+        })
+        if (data && data.create_by.id === req.userData.id) {
+            await Order.update(req.body, {
+                where: {
+                    id: req.params.order_id
+                }
+            }); return res.json({ message: 'Đơn hàng đã được hủy' })
         }
-        if (!data.data || !(req.userData.id === data.data.create_by.id))
-            return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ message: 'Không tìm thấy thông tin đơn hàng' })
     } catch (error) {
         return res.json({ error: error })
     }
@@ -117,14 +99,17 @@ exports.cancel = async (req, res) => {
 
 exports.confirm = async (req, res) => {
     try {
-        const { order_id } = req.params;
-        let data = await Order.findOneOrder(order_id);
-        if (data.status === 200 && req.userData.id === data.data.create_by.id) {
-            await Order.updateOne({ _id: order_id }, { status: 'Hoàn thành' });
-            return res.json({ message: 'Đơn hàng đã được giao' });
+        const data = await Order.findOne({
+            where: { id: req.params.order_id }
+        })
+        if (data && data.create_by.id === req.userData.id) {
+            await Order.update(req.body, {
+                where: {
+                    id: req.params.order_id
+                }
+            }); return res.json({ message: 'Đơn hàng đã được giao' })
         }
-        if (!data.data || !(req.userData.id === data.data.create_by.id))
-            return res.json({ message: 'Không tìm thấy dữ liệu' })
+        return res.json({ message: 'Không tìm thấy thông tin đơn hàng' })
     } catch (error) {
         return res.json({ error: error })
     }

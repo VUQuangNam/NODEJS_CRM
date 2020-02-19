@@ -12,15 +12,15 @@ const employeeCondition = require('../condition/employ.condition');
 
 router.route('/employee')
     .get(checkAuth,
-        validate(ListEmployeeValidation),
+        // validate(ListEmployeeValidation),
         checkRole('LIST_USER'),
-        employeeCondition.condition,
+        // employeeCondition.condition,
         EmployeeController.list
     )
     .post(
         checkAuth,
         checkRole('CREATE_USER'),
-        validate(EmployeeValidation),
+        // validate(EmployeeValidation),
         EmployeeController.create);
 router.route('/employee/:employee_id')
     .get(checkAuth,
@@ -28,7 +28,7 @@ router.route('/employee/:employee_id')
         EmployeeController.detail)
     .put(checkAuth,
         checkRole('UPDATE_USER'),
-        validate(EmployeeValidation),
+        // validate(EmployeeValidation),
         EmployeeController.update)
     .delete(checkAuth,
         checkRole('DELETE_USER'),

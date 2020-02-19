@@ -11,7 +11,6 @@ const OrderRoutes = require('./system_management/routes/order.router');
 const ProductRoutes = require('./system_management/routes/product.router');
 const AccRoutes = require('./system_management/routes/account.router');
 const UpLoadRouters = require('./system_management/routes/uploads.router');
-const UserRouters = require('./system_management/routes/user.router')
 
 const app = express();
 
@@ -39,8 +38,7 @@ app.use('/',
     EmployeeRoutes,
     OrderRoutes,
     ProductRoutes,
-    UpLoadRouters,
-    UserRouters
+    UpLoadRouters
 );
 
 app.listen(port, function () {

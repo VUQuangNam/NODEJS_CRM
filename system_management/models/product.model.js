@@ -1,55 +1,22 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(process.env.DB_SQL);
 
-const productSchema = mongoose.Schema(
-    {
-        _id: {
-            type: String
-        },
-        name: {
-            type: String,
-            required: true
-        },
-        price: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        },
-        note: String,
-        create_at: {
-            type: Number,
-            default: Date.now
-        },
-        update_at: {
-            type: Number,
-            default: Date.now
-        },
-        create_by: {
-            id: String,
-            name: String
-        }
-    }
-);
+const Product = sequelize.define('products', {
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    price: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    note: DataTypes.STRING,
+    unit: {
+        type: DataTypes.ENUM('Bộ', 'Đôi', 'Cái', 'Chiếc'),
+        allowNull: false
+    },
+    create_by: DataTypes.JSONB
+});
 
-var Product = module.exports = mongoose.model('Product', productSchema, 'products');
-module.exports.get = function (callback, limit) {
-    Product.find(callback).limit(limit);
-}
-
-Product.findOneProduct = async (id) => {
-    try {
-        const data = await Product.findOne({ _id: id });
-        if (data) return {
-            status: 200,
-            data: data
-        }
-        return {
-            status: 404,
-            message: 'NOT_FOUND'
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
+module.exports = Product;
