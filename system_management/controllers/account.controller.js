@@ -56,26 +56,27 @@ exports.changePassEmPloyee = async (req, res) => {
 
 exports.logincustomer = async (req, res) => {
     try {
-        Customer.findOne(
-            { username: req.body.username }).exec((error, customer) => {
-                if (error) return res.json({ message: error })
-                if (!customer) return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' })
-                bcrypt.compare(req.body.password, customer.password, (error, result) => {
-                    if (error) return res.json({ message: error });
-                    if (result === true) {
-                        return res.json({
-                            message: "Đăng nhập thành công",
-                            token: jwt.sign({
-                                id: customer._id, username: customer.username,
-                                name: customer.name
-                            },
-                                process.env.JWT_SECRET,
-                                { expiresIn: '10d' })
-                        })
-                    }
-                    return res.json({ message: 'Tên đăng nhập và mật khẩu không chính xác' })
+        const customer = await Customer.findOne({
+            where: {
+                username: req.body.username
+            }
+        });
+        if (!customer) return res.json({ message: 'Tên đăng nhập không chính xác' });
+        bcrypt.compare(req.body.password, customer.password, (error, result) => {
+            if (error) return res.json({ error: error });
+            if (result === true) {
+                return res.json({
+                    message: "Đăng nhập thành công",
+                    token: jwt.sign({
+                        id: customer.id,
+                        name: customer.name
+                    },
+                        process.env.JWT_SECRET,
+                        { expiresIn: '10d' })
                 })
-            })
+            }
+            return res.json({ message: 'Mật khẩu không chính xác' })
+        })
     } catch (error) {
         return res.json({ message: error })
     }

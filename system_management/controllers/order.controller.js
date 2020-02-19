@@ -45,37 +45,26 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const { items, note } = req.body;
         total = 0;
-        req.body.items.forEach(async (x) => {
+        req.body.products.forEach(async (x) => {
             if (!x.quantity) { total = total }
             else {
                 total = total + (x.price * x.quantity);
             }
         });
-        discount = req.body.discount || 0;
-        const order = new Order({
-            _id: mongoose.Types.ObjectId(),
-            items, note,
-            status: 'Đặt hàng',
-            total_price: total,
-            discount: discount,
-            create_by: {
-                id: req.userData.id,
-                name: req.userData.name
-            }
-        });
-        order.save(async (error, order) => {
-            if (error) return res.json({ error: error });
-            const data = await Customer.findOneCustomer(req.userData.id);
-            if (data.status === 200) {
-                return res.json({
-                    message: 'Thêm mới thành công!',
-                    data: order
-                });
-            }
-            if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
-        });
+        req.body.discount = req.body.discount || 0;
+        req.body.total_price = total;
+        req.body.status = 'Đặt hàng';
+        req.body.create_by = {
+            id: req.userData.id,
+            name: req.userData.name
+        }
+        console.log(req.body);
+        const data = await Order.create(req.body);
+        return res.json({
+            message: 'Thêm mới thành công',
+            data: data
+        })
     } catch (error) {
         return res.json({ error: error })
     }

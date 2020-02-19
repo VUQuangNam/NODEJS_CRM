@@ -48,7 +48,7 @@ router.post('/fileUpload', checkAuth, upload.single('image'), (req, res, next) =
 });
 
 router.get('/:up_id', (req, res, next) => {
-    const data = Upload.findOne({ img: req.req.params.up_id });
+    const data = Upload.findOne({ img: req.params.up_id });
     res.json({ data: data })
 })
 

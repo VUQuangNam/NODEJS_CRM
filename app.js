@@ -4,12 +4,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('express').Router();
+
 const CusRoutes = require('./system_management/routes/customer.router');
 const EmployeeRoutes = require('./system_management/routes/employee.router');
 const OrderRoutes = require('./system_management/routes/order.router');
 const ProductRoutes = require('./system_management/routes/product.router');
 const AccRoutes = require('./system_management/routes/account.router');
-const UpLoadRouters = require('./system_management/routes/uploads.router')
+const UpLoadRouters = require('./system_management/routes/uploads.router');
+const UserRouters = require('./system_management/routes/user.router')
 
 const app = express();
 
@@ -37,7 +39,8 @@ app.use('/',
     EmployeeRoutes,
     OrderRoutes,
     ProductRoutes,
-    UpLoadRouters
+    UpLoadRouters,
+    UserRouters
 );
 
 app.listen(port, function () {
