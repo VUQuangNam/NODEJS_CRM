@@ -1,24 +1,16 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(process.env.DB_SQL);
 
-const UpSchema = mongoose.Schema(
-    {
-        _id: {
-            type: String
-        },
-        img: {
-            type: String
-        },
-        create_by: {
-            id: String,
-            name: String
-        },
-        is_exist: {
-            type: Boolean
-        }
-    }
-);
+const Upload = sequelize.define('uploads', {
+    img: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    create_by: DataTypes.JSONB
+});
 
-const Upload = module.exports = mongoose.model('Upload', UpSchema, 'uploads');
-module.exports.get = function (callback, limit) {
-    Upload.find(callback).limit(limit);
-}
+// (async () => {
+//     await sequelize.sync({ force: true });
+//     // Code here
+// })();
+module.exports = Upload;

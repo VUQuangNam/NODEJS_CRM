@@ -1,20 +1,19 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(process.env.DB_SQL);
 
-const TokenSchema = mongoose.Schema(
-    {
-        _id: {
-            type: String
-        },
-        value: {
-            type: String
-        },
-        is_exist: {
-            type: Boolean
-        }
+const Token = sequelize.define('tokens', {
+    value: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    is_exist: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
-);
+});
 
-const Token = module.exports = mongoose.model('Token', TokenSchema, 'tokens');
-module.exports.get = function (callback, limit) {
-    Token.find(callback).limit(limit);
-}
+// (async () => {
+//     await sequelize.sync({ force: true });
+//     // Code here
+// })();
+module.exports = Token;

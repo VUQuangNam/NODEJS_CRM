@@ -35,23 +35,28 @@ exports.login = async (req, res) => {
 
 exports.changePassEmPloyee = async (req, res) => {
     try {
-        const data = await Employee.findOneEmployee(req.userData.id);
-        if (data.status === 200) {
-            bcryptjs.compare(req.body.password_old, data.data.password, async (error, result) => {
-                if (error) return res.json({ error: error });
+        const data = await Employee.findOne({
+            where: {
+                id: req.userData.id
+            }
+        })
+        if (data) {
+            bcryptjs.compare(req.body.password_old, data.password, async (err, result) => {
+                if (err) return res.json({ error: err });
                 if (result === true) {
-                    const password = await bcryptjs.hash(req.body.password_new, 8)
-                    await Employee.updateOne({ _id: data.data._id }, { password: password });
-                    return res.json({
-                        message: 'Cập nhật mật khẩu thành công'
+                    const password = await bcryptjs.hash(req.body.password_new, 8);
+                    await Employee.update({ password: password }, {
+                        where: {
+                            id: data.id
+                        }
                     });
+                    return res.json({ message: 'Đổi mật khẩu thành công' })
                 }
-                return res.json({ error: 'Mật khẩu cũ không đúng.' });
+                return res.json({ message: 'Mật khẩu cũ không đúng' })
             })
         }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' })
     } catch (error) {
-        return res.json({ message: error })
+        return res.json({ error: error })
     }
 };
 
@@ -83,32 +88,36 @@ exports.logincustomer = async (req, res) => {
 
 exports.changePassCustomer = async (req, res) => {
     try {
-        const data = await Customer.findOneCustomer(req.userData.id);
-        if (data.status === 200) {
-            bcryptjs.compare(req.body.password_old, data.data.password, async (error, result) => {
-                if (error) return res.json({ error: error });
+        const data = await Customer.findOne({
+            where: {
+                id: req.userData.id
+            }
+        })
+        if (data) {
+            bcryptjs.compare(req.body.password_old, data.password, async (err, result) => {
+                if (err) return res.json({ error: err });
                 if (result === true) {
                     const password = await bcryptjs.hash(req.body.password_new, 8);
-                    await Customer.updateOne({ _id: data.data._id }, { password: password });
-                    return res.json({ message: 'Cập nhật mật khẩu thành công' });
+                    await Customer.update({ password: password }, {
+                        where: {
+                            id: data.id
+                        }
+                    });
+                    return res.json({ message: 'Đổi mật khẩu thành công' })
                 }
-                return res.json({ error: 'Mật khẩu cũ không đúng.' });
+                return res.json({ message: 'Mật khẩu cũ không đúng' })
             })
         }
-        if (!data.data) return res.json({ message: 'Không tìm thấy dữ liệu' });
     } catch (error) {
-        return res.json({ error: error });
+        return res.json({ error: error })
     }
 };
 
 exports.logout = async (req, res) => {
     try {
-        const token = new Token({
-            _id: mongoose.Types.ObjectId(),
-            value: req.headers.authorization.split(" ")[1],
-            is_exist: false
-        });
-        token.save();
+        await Token.create({
+            value: req.headers.authorization.split(" ")[1]
+        })
         return res.json({ message: 'Đăng xuất thành công' });
     } catch (error) {
         return res.json({ message: error });

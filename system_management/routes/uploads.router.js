@@ -29,26 +29,25 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.post('/fileUpload', checkAuth, upload.single('image'), (req, res, next) => {
-    const upload = new Upload({
-        _id: mongoose.Types.ObjectId(),
+router.post('/fileUpload', checkAuth, upload.single('image'), async (req, res, next) => {
+    const data = await Upload.create({
         img: req.file.filename,
         create_by: {
             id: req.userData.id,
             name: req.userData.name
         }
-    })
-    upload.save(async (error, upload) => {
-        upload = upload.toJSON();
-        if (error) return res.json({ message: 'Tạo mới thất bại' });
-        return res.json({
-            data: upload.img
-        });
     });
+    return res.json({
+        data: data
+    })
 });
 
 router.get('/:up_id', (req, res, next) => {
-    const data = Upload.findOne({ img: req.params.up_id });
+    const data = Upload.findOne({
+        where: {
+            img: req.params.up_id
+        }
+    });
     res.json({ data: data })
 })
 
