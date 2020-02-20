@@ -3,11 +3,11 @@ const bcryptjs = require('bcryptjs');
 Employee = require('../models/employee.model');
 
 const pool = require('../config/query')
-const filter = require('../config/filter')
+const filter = require('../filter/employee.filter')
 
 exports.list = async (req, res) => {
     try {
-        const filterEmpolyees = filter('employees', req.query);
+        const filterEmpolyees = filter(req.query);
         const employees = await pool.query(`${filterEmpolyees}`);
         return res.json({
             count: employees.rows.length,

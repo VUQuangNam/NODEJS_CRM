@@ -2,11 +2,11 @@ const Product = require('../models/product.model');
 const Employee = require('../models/employee.model');
 
 const pool = require('../config/query');
-const filter = require('../config/filter');
+const filter = require('../filter/product.filter');
 
 exports.list = async (req, res) => {
     try {
-        const filterProducts = filter('products', req.query);
+        const filterProducts = filter(req.query);
         const products = await pool.query(`${filterProducts}`);
         return res.json({
             count: products.rows.length,

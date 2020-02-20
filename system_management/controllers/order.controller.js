@@ -2,12 +2,11 @@ const Order = require('../models/order.model');
 const Customer = require('../models/customer.model');
 
 const pool = require('../config/query')
-const filter = require('../config/filter')
+const filter = require('../filter/order.filter')
 
 exports.list = async (req, res) => {
     try {
-        const filterOrder = filter('orders', req.query);
-        console.log(filterOrder);
+        const filterOrder = filter(req.query);
         const orders = await pool.query(`${filterOrder}`);
         return res.json({
             count: orders.rows.length,
@@ -40,6 +39,7 @@ exports.create = async (req, res) => {
                 id: check.id,
                 name: check.name
             }
+            req.body.create_by_id = check.id;
             const data = await Order.create(req.body);
             return res.json({
                 message: 'Thêm mới thành công',
