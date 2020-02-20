@@ -1,6 +1,5 @@
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose')
 
 Employee = require('../models/employee.model');
 Customer = require('../models/customer.model')

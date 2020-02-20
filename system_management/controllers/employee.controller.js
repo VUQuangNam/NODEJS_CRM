@@ -2,14 +2,17 @@ const bcryptjs = require('bcryptjs');
 
 Employee = require('../models/employee.model');
 
+const pool = require('../config/query')
+const filter = require('../config/filter')
+
 exports.list = async (req, res) => {
     try {
-        Employee.findAll().then(empolyee => {
-            return res.json({
-                count: empolyee.length,
-                data: empolyee
-            })
-        });
+        const filterEmpolyees = filter('employees', req.query);
+        const employees = await pool.query(`${filterEmpolyees}`);
+        return res.json({
+            count: employees.rows.length,
+            data: employees.rows
+        })
     } catch (error) {
         return res.json({ error: error })
     }

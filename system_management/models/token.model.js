@@ -14,6 +14,6 @@ const Token = sequelize.define('tokens', {
 
 // (async () => {
 //     await sequelize.sync({ force: true });
-//     // Code here
+//     Code here
 // })();
 module.exports = Token;

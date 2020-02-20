@@ -1,15 +1,18 @@
 const Order = require('../models/order.model');
 const Customer = require('../models/customer.model');
 
+const pool = require('../config/query')
+const filter = require('../config/filter')
 
 exports.list = async (req, res) => {
     try {
-        Order.findAll().then(orders => {
-            return res.json({
-                count: orders.length,
-                data: orders
-            })
-        });
+        const filterOrder = filter('orders', req.query);
+        console.log(filterOrder);
+        const orders = await pool.query(`${filterOrder}`);
+        return res.json({
+            count: orders.rows.length,
+            data: orders.rows
+        })
     } catch (error) {
         return res.json({ error: error })
     }
