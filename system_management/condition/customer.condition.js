@@ -1,27 +1,37 @@
+const sequelize = require('sequelize');
+const { Op } = sequelize;
+
 exports.condition = async (req, res, next) => {
     try {
         const params = req.query ? req.query : {};
-        const condition = [
-            {
-                gender: params.gender
-                    ? { $in: params.gender }
-                    : { $exists: true }
-            },
-            {
-                $or: [
-                    { name: params.keyword ? new RegExp(params.keyword, 'i') : { $exists: true } },
-                    { _id: params.keyword ? new RegExp(params.keyword, 'i') : { $exists: true } }
-                ]
-            },
-            {
-                create_at: params.start_time && params.end_time
-                    ? {
-                        $gte: params.start_time,
-                        $lte: params.end_time
+        let condition = {};
+        if (params.keyword) {
+            condition[Op.or] = [
+                {
+                    name: {
+                        [Op.iLike]: `%${params.keyword}%`
                     }
-                    : { $exists: true }
+                },
+                {
+                    username: {
+                        [Op.iLike]: `%${params.keyword}%`
+                    }
+                },
+                // {
+                //     id: {
+                //         [Op.iLike]: `%${params.keyword}%`
+                //     }
+                // }
+            ]
+        }
+        if (params.gender) {
+            condition.gender = params.gender || '';
+        }
+        if (params.minAge > 0 && params.maxAge && params.maxAge > params.minAge) {
+            condition.age = {
+                [Op.between]: [params.minAge, params.maxAge]
             }
-        ];
+        }
         req.conditions = condition;
         return next();
     } catch (error) {

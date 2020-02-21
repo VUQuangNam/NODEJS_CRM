@@ -1,22 +1,29 @@
 exports.condition = async (req, res, next) => {
     try {
         const params = req.query ? req.query : {};
-        const condition = [
-            {
-                $or: [
-                    { name: params.keyword ? new RegExp(params.keyword, 'i') : { $exists: true } },
-                    { _id: params.keyword ? new RegExp(params.keyword, 'i') : { $exists: true } }
-                ]
-            },
-            {
-                create_at: params.start_time && params.end_time
-                    ? {
-                        $gte: params.start_time,
-                        $lte: params.end_time
+        let condition = {};
+        if (params.keyword) {
+            condition[Op.or] = [
+                {
+                    name: {
+                        [Op.iLike]: `%${params.keyword}%`
                     }
-                    : { $exists: true }
+                }
+                // {
+                //     id: {
+                //         [Op.iLike]: `%${params.keyword}%`
+                //     }
+                // }
+            ]
+        }
+        if (params.unit) {
+            condition.unit = params.unit || '';
+        }
+        if (params.minPrice > 0 && params.maxPrice && params.maxPrice > params.minPrice) {
+            condition.price = {
+                [Op.between]: [params.minPrice, params.maxPrice]
             }
-        ];
+        }
         req.conditions = condition;
         return next();
     } catch (error) {

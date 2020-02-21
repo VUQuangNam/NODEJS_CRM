@@ -6,12 +6,10 @@ const filter = require('../filter/order.filter')
 
 exports.list = async (req, res) => {
     try {
-        const filterOrder = filter(req.query);
-        const orders = await pool.query(`${filterOrder}`);
-        return res.json({
-            count: orders.rows.length,
-            data: orders.rows
-        })
+        const orders = await Order.findAndCountAll({
+            where: req.conditions
+        });
+        return res.json(orders)
     } catch (error) {
         return res.json({ error: error })
     }

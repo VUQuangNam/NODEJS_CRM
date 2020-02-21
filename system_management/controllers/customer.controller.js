@@ -1,17 +1,20 @@
 const bcryptjs = require('bcryptjs');
 const Customer = require('../models/customer.model');
+const Order = require('../models/order.model');
 
 const pool = require('../config/query')
-const filter = require('../filter/customer.filter')
+const filter = require('../filter/customer.filter');
 
 exports.list = async (req, res) => {
     try {
-        const filterCus = filter(req.query);
-        const customers = await pool.query(`${filterCus}`);
-        return res.json({
-            count: customers.rows.length,
-            data: customers.rows
-        })
+        const customers = await Customer.findAndCountAll({
+            where: req.conditions,
+            // include: [{
+            //     model: Order,
+            //     attributes: ['id', [11, "orders"]]
+            // }]
+        });
+        return res.json(customers)
     } catch (error) {
         return res.json({ error: error })
     }

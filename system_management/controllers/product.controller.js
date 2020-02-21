@@ -1,17 +1,15 @@
 const Product = require('../models/product.model');
 const Employee = require('../models/employee.model');
 
-const pool = require('../config/query');
-const filter = require('../filter/product.filter');
+// const pool = require('../config/query');
+// const filter = require('../filter/product.filter');
 
 exports.list = async (req, res) => {
     try {
-        const filterProducts = filter(req.query);
-        const products = await pool.query(`${filterProducts}`);
-        return res.json({
-            count: products.rows.length,
-            data: products.rows
-        })
+        const products = await Product.findAndCountAll({
+            where: req.conditions
+        });
+        return res.json(products)
     } catch (error) {
         return res.json({ error: error })
     }

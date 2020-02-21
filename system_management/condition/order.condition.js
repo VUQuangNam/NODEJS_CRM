@@ -1,17 +1,19 @@
+const sequelize = require('sequelize');
+const { Op } = sequelize;
+
 exports.condition = async (req, res, next) => {
     try {
         const params = req.query ? req.query : {};
-        const condition = [
-            { _id: params.keyword ? new RegExp(params.keyword, 'i') : { $exists: true } },
-            {
-                create_at: params.start_time && params.end_time
-                    ? {
-                        $gte: params.start_time,
-                        $lte: params.end_time
+        let condition = {};
+        if (params.keyword) {
+            condition[Op.or] = [
+                {
+                    id: {
+                        [Op.iLike]: `%${params.keyword}%`
                     }
-                    : { $exists: true }
-            }
-        ];
+                }
+            ]
+        }
         req.conditions = condition;
         return next();
     } catch (error) {

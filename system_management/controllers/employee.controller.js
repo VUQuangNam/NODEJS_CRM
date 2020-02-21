@@ -7,12 +7,10 @@ const filter = require('../filter/employee.filter')
 
 exports.list = async (req, res) => {
     try {
-        const filterEmpolyees = filter(req.query);
-        const employees = await pool.query(`${filterEmpolyees}`);
-        return res.json({
-            count: employees.rows.length,
-            data: employees.rows
-        })
+        const employees = await Employee.findAndCountAll({
+            where: req.conditions
+        });
+        return res.json(employees)
     } catch (error) {
         return res.json({ error: error })
     }
