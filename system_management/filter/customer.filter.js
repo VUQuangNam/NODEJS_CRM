@@ -1,5 +1,4 @@
 module.exports = (params) => {
-    console.log(params);
     let queries = '';
     const filter = `SELECT customers.*,
     COALESCE(json_agg(orders.*)

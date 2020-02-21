@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(process.env.DB_SQL);
+const Order = require('../models/order.model')
 
 const Customer = sequelize.define('customers', {
     name: {
@@ -28,5 +29,8 @@ const Customer = sequelize.define('customers', {
     address: DataTypes.STRING,
     gender: DataTypes.ENUM('male', 'female')
 });
+
+Order.belongsTo(Customer);
+Customer.hasMany(Order, { as: 'orders' });
 
 module.exports = Customer;
