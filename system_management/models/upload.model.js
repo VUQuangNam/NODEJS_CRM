@@ -9,8 +9,4 @@ const Upload = sequelize.define('uploads', {
     create_by: DataTypes.JSONB
 });
 
-// (async () => {
-//     await sequelize.sync({ force: true });
-//     // Code here
-// })();
 module.exports = Upload;

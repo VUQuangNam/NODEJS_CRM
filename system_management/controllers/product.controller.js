@@ -1,8 +1,8 @@
 const Product = require('../models/product.model');
 const Employee = require('../models/employee.model');
 
-// const pool = require('../config/query');
-// const filter = require('../filter/product.filter');
+const pool = require('../config/query');
+const filter = require('../filter/product.filter');
 
 exports.list = async (req, res) => {
     try {

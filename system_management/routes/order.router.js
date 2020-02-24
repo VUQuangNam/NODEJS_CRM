@@ -11,18 +11,18 @@ const orderCondition = require('../condition/order.condition');
 
 router.route('/order')
     .get(checkAuth,
-        // validate(ListOrderValidation),
-        // orderCondition.condition,
+        validate(ListOrderValidation),
+        orderCondition.condition,
         OrderController.list
     )
     .post(checkAuth,
-        // validate(OrderValidation),
+        validate(OrderValidation),
         OrderController.create);
 router.route('/order/:order_id')
     .get(checkAuth,
         OrderController.detail)
     .put(checkAuth,
-        // validate(OrderValidation),
+        validate(OrderValidation),
         OrderController.update)
 router.route('/order/cancel/:order_id')
     .put(checkAuth,

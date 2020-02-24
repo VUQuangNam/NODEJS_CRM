@@ -8,16 +8,16 @@ exports.condition = async (req, res, next) => {
                     name: {
                         [Op.iLike]: `%${params.keyword}%`
                     }
+                },
+                {
+                    id: {
+                        [Op.eq]: params.keyword
+                    }
                 }
-                // {
-                //     id: {
-                //         [Op.iLike]: `%${params.keyword}%`
-                //     }
-                // }
             ]
         }
         if (params.unit) {
-            condition.unit = params.unit || '';
+            condition.unit = params.unit;
         }
         if (params.minPrice > 0 && params.maxPrice && params.maxPrice > params.minPrice) {
             condition.price = {

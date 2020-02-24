@@ -17,15 +17,16 @@ exports.condition = async (req, res, next) => {
                         [Op.iLike]: `%${params.keyword}%`
                     }
                 },
-                // {
-                //     id: {
-                //         [Op.iLike]: `%${params.keyword}%`
-                //     }
-                // }
+                {
+                    phone: {
+                        [Op.iLike]: `%${params.keyword}%`
+                    }
+                }
             ]
         }
+
         if (params.gender) {
-            condition.gender = params.gender || '';
+            condition.gender = params.gender;
         }
         if (params.minAge > 0 && params.maxAge && params.maxAge > params.minAge) {
             condition.age = {

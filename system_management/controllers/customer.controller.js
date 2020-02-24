@@ -8,13 +8,12 @@ const filter = require('../filter/customer.filter');
 exports.list = async (req, res) => {
     try {
         const customers = await Customer.findAndCountAll({
-            where: req.conditions,
-            // include: [{
-            //     model: Order,
-            //     attributes: ['id', [11, "orders"]]
-            // }]
+            where: req.conditions
         });
-        return res.json(customers)
+        return res.json({
+            count: customers.count,
+            data: customers.rows
+        })
     } catch (error) {
         return res.json({ error: error })
     }

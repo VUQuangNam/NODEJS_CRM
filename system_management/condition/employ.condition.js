@@ -16,6 +16,11 @@ exports.condition = async (req, res, next) => {
                     username: {
                         [Op.iLike]: `%${params.keyword}%`
                     }
+                },
+                {
+                    phone: {
+                        [Op.iLike]: `%${params.keyword}%`
+                    }
                 }
             ]
         }

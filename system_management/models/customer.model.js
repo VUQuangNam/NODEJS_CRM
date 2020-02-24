@@ -29,7 +29,4 @@ const Customer = sequelize.define('customers', {
     gender: DataTypes.ENUM('male', 'female')
 });
 
-// Order.belongsTo(Customer);
-// Customer.hasMany(Order, { as: 'orders' });
-
 module.exports = Customer;

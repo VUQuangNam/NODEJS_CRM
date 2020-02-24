@@ -9,7 +9,7 @@ exports.condition = async (req, res, next) => {
             condition[Op.or] = [
                 {
                     id: {
-                        [Op.iLike]: `%${params.keyword}%`
+                        [Op.eq]: params.keyword
                     }
                 }
             ]
