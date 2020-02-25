@@ -22,7 +22,7 @@ exports.login = async (req, res) => {
                         roles: employee.roles
                     },
                         process.env.JWT_SECRET,
-                        { expiresIn: '10d' })
+                        { expiresIn: '1d' })
                 })
             }
             return res.json({ message: 'Mật khẩu không chính xác' })
