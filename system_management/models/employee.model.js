@@ -28,7 +28,15 @@ const Employee = sequelize.define('employees', {
     birthday: DataTypes.DATE,
     address: DataTypes.STRING,
     gender: DataTypes.ENUM('male', 'female'),
-    roles: DataTypes.JSONB
+    roles: DataTypes.JSONB,
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    }
 });
 
 module.exports = Employee;

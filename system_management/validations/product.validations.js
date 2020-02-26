@@ -8,17 +8,23 @@ module.exports = {
             unit: joi.string()
                 .only('Cái', 'Chiếc', 'Bộ', 'Đôi')
                 .required(),
-            price: joi.number().positive()
+            price: joi.number()
+                .positive()
         }
     },
     ListProductValidation: {
         query: {
-            min_price: joi.number().allow(null, '').min(0),
-            max_price: joi.number().allow(null, ''),
+            min_price: joi.number()
+                .allow(null, '')
+                .min(0),
+            max_price: joi.number()
+                .allow(null, ''),
             keyword: joi.string()
                 .allow(null, ''),
-            start_time: joi.number().allow(null, ''),
-            end_time: joi.number().allow(null, '')
+            start_time: joi.date()
+                .allow(null, ''),
+            end_time: joi.date()
+                .allow(null, '')
         }
     }
 }

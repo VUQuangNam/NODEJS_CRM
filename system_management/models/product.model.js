@@ -16,7 +16,15 @@ const Product = sequelize.define('products', {
         type: DataTypes.ENUM('Bộ', 'Đôi', 'Cái', 'Chiếc'),
         allowNull: false
     },
-    create_by: DataTypes.JSONB
+    create_by: DataTypes.JSONB,
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    }
 });
 
 module.exports = Product;

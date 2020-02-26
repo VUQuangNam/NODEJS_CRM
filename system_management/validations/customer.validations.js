@@ -26,6 +26,10 @@ module.exports = {
             start_time: joi.number()
                 .allow(null, ''),
             end_time: joi.number()
+                .allow(null, ''),
+            start_time: joi.date()
+                .allow(null, ''),
+            end_time: joi.date()
                 .allow(null, '')
         }
     }

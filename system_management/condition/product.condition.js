@@ -2,6 +2,11 @@ exports.condition = async (req, res, next) => {
     try {
         const params = req.query ? req.query : {};
         let condition = {};
+        let start; let end;
+        if (params.start_time && params.end_time) {
+            start = new Date(params.start_time), end = new Date(params.end_time);
+            start.setHours(0, 0, 0, 0); end.setHours(23, 59, 59, 999);
+        }
         if (params.keyword) {
             condition[Op.or] = [
                 {
@@ -22,6 +27,18 @@ exports.condition = async (req, res, next) => {
         if (params.minPrice > 0 && params.maxPrice && params.maxPrice > params.minPrice) {
             condition.price = {
                 [Op.between]: [params.minPrice, params.maxPrice]
+            }
+        }
+
+        if (params.by_date === 'create' && start && end) {
+            condition.createdAt = {
+                [Op.between]: [start, end]
+            }
+        }
+
+        if (params.by_date === 'update' && start && end) {
+            condition.updatedAt = {
+                [Op.between]: [start, end]
             }
         }
         req.conditions = condition;

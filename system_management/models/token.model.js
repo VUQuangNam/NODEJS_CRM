@@ -9,6 +9,10 @@ const Token = sequelize.define('tokens', {
     is_exist: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
     }
 });
 

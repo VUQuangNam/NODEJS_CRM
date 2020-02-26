@@ -12,6 +12,14 @@ const Order = sequelize.define('orders', {
     },
     create_by: {
         type: DataTypes.JSON
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
     }
 });
 

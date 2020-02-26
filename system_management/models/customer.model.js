@@ -26,7 +26,15 @@ const Customer = sequelize.define('customers', {
     age: DataTypes.INTEGER,
     birthday: DataTypes.DATE,
     address: DataTypes.STRING,
-    gender: DataTypes.ENUM('male', 'female')
+    gender: DataTypes.ENUM('male', 'female'),
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date()
+    }
 });
 
 module.exports = Customer;
