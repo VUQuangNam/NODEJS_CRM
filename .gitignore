@@ -2,7 +2,3 @@ node_modules
 .env
 package-lock.json
 README.md
-
-logs
-*.log
-npm-debug.log*

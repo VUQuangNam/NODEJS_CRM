@@ -1,5 +1,4 @@
-const sequelize = require('sequelize');
-const { Op } = sequelize;
+const { Op } = require('sequelize');
 
 exports.condition = async (req, res, next) => {
     try {
@@ -11,13 +10,7 @@ exports.condition = async (req, res, next) => {
             start.setHours(0, 0, 0, 0); end.setHours(23, 59, 59, 999);
         }
         if (params.keyword) {
-            condition[Op.or] = [
-                {
-                    id: {
-                        [Op.eq]: params.keyword
-                    }
-                }
-            ]
+            condition.id = params.keyword;
         }
 
         if (params.by_date === 'create' && start && end) {

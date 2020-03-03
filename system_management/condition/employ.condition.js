@@ -1,5 +1,4 @@
-const sequelize = require('sequelize');
-const { Op } = sequelize;
+const { Op } = require('sequelize');
 
 exports.condition = async (req, res, next) => {
     try {

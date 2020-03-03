@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 exports.condition = async (req, res, next) => {
     try {
         const params = req.query ? req.query : {};
@@ -12,11 +14,6 @@ exports.condition = async (req, res, next) => {
                 {
                     name: {
                         [Op.iLike]: `%${params.keyword}%`
-                    }
-                },
-                {
-                    id: {
-                        [Op.eq]: params.keyword
                     }
                 }
             ]

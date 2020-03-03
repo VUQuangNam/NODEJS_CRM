@@ -12,6 +12,7 @@ module.exports = {
                 .positive()
         }
     },
+
     ListProductValidation: {
         query: {
             min_price: joi.number()
