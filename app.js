@@ -25,12 +25,6 @@ app.use(express.static('uploads'))
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true });
-const db = mongoose.connection;
-
-if (!db)
-    console.log("Lỗi kết nối")
-else
-    console.log("Kết nối DB thành công")
 
 app.use('/',
     AccRoutes,

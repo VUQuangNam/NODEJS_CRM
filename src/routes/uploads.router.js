@@ -38,7 +38,8 @@ router.post('/fileUpload', checkAuth, upload.single('image'), async (req, res, n
         }
     });
     return res.json({
-        data: data
+        data: data,
+        link: data.img
     })
 });
 
