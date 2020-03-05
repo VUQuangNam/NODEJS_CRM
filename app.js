@@ -5,12 +5,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('express').Router();
 
-const CusRoutes = require('./system_management/routes/customer.router');
-const EmployeeRoutes = require('./system_management/routes/employee.router');
-const OrderRoutes = require('./system_management/routes/order.router');
-const ProductRoutes = require('./system_management/routes/product.router');
-const AccRoutes = require('./system_management/routes/account.router');
-const UpLoadRouters = require('./system_management/routes/uploads.router');
+const CusRoutes = require('./src/routes/customer.router');
+const EmployeeRoutes = require('./src/routes/employee.router');
+const OrderRoutes = require('./src/routes/order.router');
+const ProductRoutes = require('./src/routes/product.router');
+const AccRoutes = require('./src/routes/account.router');
+const UpLoadRouters = require('./src/routes/uploads.router');
+
 
 const app = express();
 

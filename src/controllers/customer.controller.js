@@ -3,7 +3,7 @@ const Customer = require('../models/customer.model');
 const Order = require('../models/order.model');
 
 const pool = require('../config/query')
-const filter = require('../filter/customer.filter');
+const filter = require('../filter_query_sql/customer.filter');
 
 exports.list = async (req, res) => {
     try {

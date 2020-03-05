@@ -2,7 +2,7 @@ const Order = require('../models/order.model');
 const Customer = require('../models/customer.model');
 
 const pool = require('../config/query')
-const filter = require('../filter/order.filter')
+const filter = require('../filter_query_sql/order.filter')
 
 exports.list = async (req, res) => {
     try {

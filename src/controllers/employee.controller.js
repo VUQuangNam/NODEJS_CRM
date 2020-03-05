@@ -3,7 +3,7 @@ const bcryptjs = require('bcryptjs');
 Employee = require('../models/employee.model');
 
 const pool = require('../config/query')
-const filter = require('../filter/employee.filter')
+const filter = require('../filter_query_sql/employee.filter')
 
 exports.list = async (req, res) => {
     try {
